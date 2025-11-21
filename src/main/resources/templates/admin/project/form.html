@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${projectForm.id == null ? '새 프로젝트 등록' : '프로젝트 수정'}">
+        프로젝트 폼
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <meta name="description" content="포트폴리오에 노출할 프로젝트를 등록/수정하는 관리자 페이지입니다."/>
+    <meta name="author" content="Hong Jisoo"/>
+
+    <!-- 포트폴리오와 같은 폰트 / 메인 CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" crossorigin href="/assets/index-DS7I41Nk.css"/>
+
+    <!-- Bootstrap 5 (폼 컴포넌트용) -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+    />
+
+    <!-- Admin용 라이트 톤 스타일 -->
+    <style>
+        body {
+    margin: 0;
+    font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #111827;
+}
+
+/* ✅ 두 페이지 공통 레이아웃 */
+.admin-shell {
+    max-width: 1120px;      /* 두 페이지 모두 같은 값으로 통일 */
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+}
+
+/* ✅ 공통 헤더 */
+.admin-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    min-height: 64px;       /* 헤더 높이 최소 64px로 고정 → 덜 출렁임 */
+}
+
+.admin-nav-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #047857;
+}
+
+.admin-nav-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.admin-nav-links {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;    /* 링크들이 줄바꿈 되지 않게 */
+}
+
+.admin-nav-links a {
+    font-size: 14px;
+    margin-left: 16px;
+    text-decoration: none;
+    color: #4b5563;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+.admin-nav-links a:hover {
+    color: #111827;
+    border-bottom-color: #d1d5db;
+}
+
+.admin-nav-links a.active {
+    color: #111827;
+    border-bottom-color: #16a34a;
+    font-weight: 600;
+}
+
+
+        /* 메인 카드 (하얀 카드) */
+        .admin-card {
+            border-radius: 18px;
+            background: #ffffff;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e5e7eb;
+            padding: 28px 28px 32px;
+        }
+
+        .admin-page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .admin-page-sub {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        /* 폼 요소들 */
+        .admin-card .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .admin-card .form-control,
+        .admin-card textarea.form-control {
+            font-size: 14px;
+        }
+
+        /* 버튼 컬러: 초록(primary) */
+        .btn-pf-primary {
+            background-color: #16a34a;
+            border-color: #16a34a;
+        }
+
+        .btn-pf-primary:hover {
+            background-color: #15803d;
+            border-color: #15803d;
+        }
+
+        .btn-pf-secondary {
+            border-radius: 999px;
+        }
+
+        .btn-pf-primary,
+        .btn-pf-secondary {
+            border-radius: 999px;
+            padding-inline: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header('projects')}"></div>
+
+<div class="admin-shell">
+
+    <!-- 메인 카드 -->
+    <main class="admin-card">
+
+        <div class="mb-3">
+            <h1 class="admin-page-title"
+                th:text="${projectForm.id} == null ? '새 프로젝트 등록' : '프로젝트 수정'">
+                새 프로젝트 등록
+            </h1>
+            <p class="admin-page-sub">
+                포트폴리오에 보여줄 프로젝트의 핵심 정보들을 정리하는 페이지입니다.
+            </p>
+        </div>
+
+        <!-- ✅ th:object 를 projectForm 으로 변경 -->
+        <form th:object="${projectForm}"
+              th:action="${projectForm.id} == null
+                    ? @{/admin/projects/new}
+                    : @{/admin/projects/{id}/edit(id=${projectForm.id})}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- ID (수정 시 hidden) -->
+            <input type="hidden" th:field="*{id}" />
+
+            <!-- 제목 -->
+            <div class="mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input type="text"
+                       id="title"
+                       th:field="*{title}"
+                       class="form-control"
+                       placeholder="예) UniLife – 대학생 일정 & 학점 관리 웹앱"
+                       required />
+                <!-- 🔴 제목 에러 -->
+                <div class="text-danger small mt-1"
+                     th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}">
+                    제목 에러
+                </div>
+            </div>
+
+            <!-- 설명 -->
+            <div class="mb-3">
+                <label for="description" class="form-label">설명</label>
+                <textarea id="description"
+                          th:field="*{description}"
+                          class="form-control"
+                          rows="4"
+                          placeholder="프로젝트 목적, 주요 기능, 해결한 문제 등을 적어주세요."
+                          required></textarea>
+                <!-- 🔴 설명 에러 -->
+                <div class="text-danger small mt-1"
+                     th:if="${#fields.hasErrors('description')}"
+                     th:errors="*{description}">
+                    설명 에러
+                </div>
+            </div>
+
+            <!-- 기술 스택 -->
+            <div class="mb-3">
+                <label for="techStack" class="form-label">기술 스택</label>
+                <input type="text"
+                       id="techStack"
+                       th:field="*{techStack}"
+                       class="form-control"
+                       placeholder="예) Spring Boot, JPA, MySQL, Thymeleaf" />
+                <div class="text-danger small mt-1"
+                     th:if="${#fields.hasErrors('techStack')}"
+                     th:errors="*{techStack}">
+                    기술 스택 에러
+                </div>
+            </div>
+
+            <!-- 기여 내용 -->
+            <div class="mb-3">
+                <label for="contribution" class="form-label">기여 내용</label>
+                <input type="text"
+                       id="contribution"
+                       th:field="*{contribution}"
+                       class="form-control"
+                       placeholder="예) 백엔드 API 설계 및 구현, DB 모델링" />
+                <div class="text-danger small mt-1"
+                     th:if="${#fields.hasErrors('contribution')}"
+                     th:errors="*{contribution}">
+                    기여 내용 에러
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- 시작일 -->
+                <div class="col-md-6 mb-3">
+                    <label for="startDate" class="form-label">시작일</label>
+                    <input type="text"
+                           id="startDate"
+                           th:field="*{startDate}"
+                           class="form-control"
+                           placeholder="예) 2025-03" />
+                    <div class="text-danger small mt-1"
+                         th:if="${#fields.hasErrors('startDate')}"
+                         th:errors="*{startDate}">
+                        시작일 에러
+                    </div>
+                </div>
+
+                <!-- 종료일 -->
+                <div class="col-md-6 mb-3">
+                    <label for="endDate" class="form-label">종료일</label>
+                    <input type="text"
+                           id="endDate"
+                           th:field="*{endDate}"
+                           class="form-control"
+                           placeholder="예) 2025-06 (진행 중이면 '진행 중')" />
+                    <div class="text-danger small mt-1"
+                         th:if="${#fields.hasErrors('endDate')}"
+                         th:errors="*{endDate}">
+                        종료일 에러
+                    </div>
+                </div>
+            </div>
+
+            <!-- 프로젝트 URL -->
+            <div class="mb-4">
+                <label for="projectUrl" class="form-label">프로젝트 URL (Github / 배포 링크)</label>
+                <input type="text"
+                       id="projectUrl"
+                       th:field="*{projectUrl}"
+                       class="form-control"
+                       placeholder="예) https://github.com/hongjisu/UniLife" />
+                <div class="text-danger small mt-1"
+                     th:if="${#fields.hasErrors('projectUrl')}"
+                     th:errors="*{projectUrl}">
+                    URL 에러
+                </div>
+            </div>
+
+            <!-- 🔹 파일 업로드 필드 -->
+            <div class="mb-4">
+                <label for="imageFile" class="form-label">프로젝트 이미지 업로드</label>
+                <input type="file"
+                       id="imageFile"
+                       name="imageFile"
+                       class="form-control"
+                       accept="image/*">
+                <div class="form-text">
+                    이미지 파일을 업로드하면 /uploads/ 경로로 저장되고, 미리보기 카드에 사용됩니다.
+                </div>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div class="d-flex justify-content-between">
+                <a th:href="@{/admin/projects}" class="btn btn-outline-secondary btn-pf-secondary">
+                    목록으로 돌아가기
+                </a>
+
+                <button type="submit"
+                        class="btn btn-pf-primary text-white"
+                        th:text="${projectForm.id} == null ? '저장' : '수정'">
+                    저장
+                </button>
+            </div>
+
+        </form>
+    </main>
+</div>
+
+<!-- Bootstrap JS -->
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"
+></script>
+</body>
+</html>

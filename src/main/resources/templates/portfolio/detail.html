@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="'Project | ' + ${project.title}">Project Detail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Backend Developer Project Detail" />
+    <meta name="author" content="Hong Jisoo" />
+
+    <!-- 폰트 / 메인 CSS (Lovable 스타일) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" crossorigin href="/assets/index-DS7I41Nk.css" />
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #111827;
+        }
+
+        .pf-shell {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+        }
+
+        .pf-top-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 16px;
+            color: #6b7280;
+            gap: 12px;
+        }
+
+        .pf-top-left a,
+        .pf-top-right a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .pf-top-left a:hover,
+        .pf-top-right a:hover {
+            text-decoration: underline;
+            color: #111827;
+        }
+
+        .btn-link-like {
+            border: none;
+            background: none;
+            padding: 0;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .btn-link-like:hover {
+            text-decoration: underline;
+            color: #111827;
+        }
+
+        .project-detail-header {
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb-link {
+            font-size: 12px;
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+            color: #111827;
+        }
+
+        .project-detail-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .project-detail-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .badge-primary {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background-color: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .detail-main-card {
+            margin-top: 20px;
+            border-radius: 20px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            padding: 20px 20px 24px;
+        }
+
+        .detail-image-wrapper {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 18px;
+            background-color: #e5e7eb;
+        }
+
+        .detail-image {
+            display: block;
+            width: 100%;
+            max-height: 340px;
+            object-fit: cover;
+        }
+
+        .detail-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            color: #111827;
+        }
+
+        .detail-text {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .detail-tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .detail-footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .detail-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-detail-primary {
+            border-radius: 999px;
+            border: 1px solid #16a34a;
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 6px 14px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .btn-detail-primary:hover {
+            background-color: #15803d;
+            border-color: #15803d;
+            color: #ffffff;
+        }
+
+        .btn-detail-secondary {
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            color: #111827;
+            padding: 6px 14px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .btn-detail-secondary:hover {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pf-shell">
+
+    <!-- 상단 바 (홈으로, 로그인/관리자) -->
+    <div class="pf-top-bar">
+        <div class="pf-top-left">
+            <a th:href="@{/}">&larr; Back to Home</a>
+        </div>
+
+        <div class="pf-top-right">
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/admin/login}">관리자 로그인</a>
+            </span>
+
+            <span sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/projects}">Admin 대시보드</a>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn-link-like ms-2">로그아웃</button>
+                </form>
+            </span>
+        </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="project-detail-header">
+        <a th:href="@{/}" class="breadcrumb-link">Portfolio</a>
+        <span style="font-size: 12px; color: #9ca3af;"> / Project</span>
+
+        <h1 class="project-detail-title" th:text="${project.title}">
+            UniLife – 대학생 일정 & 학점 관리 웹앱
+        </h1>
+
+        <div class="project-detail-meta">
+            <span class="badge-primary"
+                  th:text="${#strings.arraySplit(project.techStack, ',')[0]} ?: 'Project'">
+                Spring Boot
+            </span>
+
+            <span style="margin-left: 10px;">
+                <span th:text="${project.startDate}">2025-03</span>
+                <span th:if="${project.endDate != null}">
+                    ~ <span th:text="${project.endDate}">2025-06</span>
+                </span>
+            </span>
+        </div>
+    </header>
+
+    <!-- 상세 카드 -->
+    <main class="detail-main-card">
+
+        <!-- 큰 이미지 -->
+        <div class="detail-image-wrapper" th:if="${project.imageUrl}">
+            <img th:src="${project.imageUrl}"
+                 th:alt="${project.title}"
+                 class="detail-image" />
+        </div>
+
+        <!-- 설명 -->
+        <section>
+            <div class="detail-section-title">Overview</div>
+            <p class="detail-text" th:text="${project.description}">
+                프로젝트 설명이 여기에 들어갑니다.
+            </p>
+        </section>
+
+        <!-- 기술 스택 -->
+        <section th:if="${project.techStack}">
+            <div class="detail-section-title">Tech Stack</div>
+            <div class="detail-tags">
+                <span class="detail-tag"
+                      th:each="stack : ${#strings.arraySplit(project.techStack, ',')}"
+                      th:text="${#strings.trim(stack)}">
+                    Spring Boot
+                </span>
+            </div>
+        </section>
+
+        <!-- 역할 / 기여 -->
+        <section th:if="${project.contribution}">
+            <div class="detail-section-title">Role & Contribution</div>
+            <p class="detail-text" th:text="${project.contribution}">
+                백엔드 API 설계 및 구현
+            </p>
+        </section>
+
+        <!-- 링크 / footer -->
+        <section class="detail-footer">
+            <div style="font-size: 13px; color: #6b7280;">
+                &copy; 202345015 홍지수 All rights reserved.
+            </div>
+
+            <div class="detail-links">
+                <a th:if="${project.projectUrl}"
+                   th:href="${project.projectUrl}"
+                   target="_blank"
+                   class="btn-detail-primary">
+                    Live / Code 보기
+                </a>
+
+                <a th:href="@{/}"
+                   class="btn-detail-secondary">
+                    포트폴리오 홈으로
+                </a>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>

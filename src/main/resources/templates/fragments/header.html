@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+<header th:fragment="header(activeMenu)">
+    <div class="pf-header">
+        <div class="pf-header-inner">
+            <!-- 로고 / 이름 -->
+            <div class="pf-logo">
+                <a th:href="@{/}">
+                    HONG JISOO
+                    <span class="pf-logo-dot">· PORTFOLIO</span>
+                </a>
+            </div>
+
+            <!-- 네비게이션 -->
+            <nav class="pf-nav">
+                <a th:href="@{/}"
+                   class="pf-nav-link"
+                   th:classappend="${activeMenu}=='home' ? ' pf-nav-link-active' : ''">
+                    Home
+                </a>
+
+                <a sec:authorize="hasRole('ADMIN')"
+                   th:href="@{/admin/projects}"
+                   class="pf-nav-link"
+                   th:classappend="${activeMenu}=='projects' ? ' pf-nav-link-active' : ''">
+                    Projects
+                </a>
+
+                <a sec:authorize="hasRole('ADMIN')"
+                   th:href="@{/admin/contacts}"
+                   class="pf-nav-link pf-nav-contact"
+                   th:classappend="${activeMenu}=='contacts' ? ' pf-nav-link-active' : ''">
+                    문의함
+                    <!-- 안 읽은 개수 뱃지 -->
+                    <span th:if="${unreadContactCount != null and unreadContactCount > 0}"
+                          class="pf-badge-unread"
+                          th:text="${unreadContactCount}">
+                        1
+                    </span>
+                </a>
+
+                <!-- 비로그인: 관리자 로그인 -->
+                <a sec:authorize="isAnonymous()"
+                   th:href="@{/admin/login}"
+                   class="pf-nav-link pf-nav-login">
+                    Admin Login
+                </a>
+
+                <!-- 로그인: 로그아웃 버튼 -->
+                <form sec:authorize="isAuthenticated()"
+                      th:action="@{/logout}"
+                      method="post"
+                      class="pf-nav-logout-form">
+                    <button type="submit"
+                            class="pf-nav-link pf-nav-logout"
+                            onclick="return confirm('정말 로그아웃 하시겠습니까?');">
+                        Logout
+                    </button>
+                </form>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 헤더용 스타일 (body 안에 있어도 동작함) -->
+    <style>
+        .pf-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .pf-header-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .pf-logo a {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #111827;
+            text-decoration: none;
+        }
+
+        .pf-logo-dot {
+            font-weight: 500;
+            color: #6b7280;
+            margin-left: 4px;
+        }
+
+        .pf-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+
+        .pf-nav-link {
+            position: relative;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #6b7280;
+            transition: all 0.16s ease;
+            border: 1px solid transparent;
+            background: transparent;
+        }
+
+        .pf-nav-link:hover {
+            color: #111827;
+            border-color: #d1d5db;
+            background-color: #f9fafb;
+        }
+
+        .pf-nav-link-active {
+            color: #16a34a;
+            border-color: #bbf7d0;
+            background-color: #ecfdf3;
+        }
+
+        .pf-nav-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pf-badge-unread {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background-color: #ef4444;
+            color: #ffffff;
+            font-size: 11px;
+            line-height: 18px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .pf-nav-login {
+            border-color: #e5e7eb;
+        }
+
+        .pf-nav-logout-form {
+            margin: 0;
+        }
+
+        .pf-nav-logout {
+            border-color: #fee2e2;
+            background-color: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .pf-nav-logout:hover {
+            border-color: #fecaca;
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .pf-header-inner {
+                padding-inline: 16px;
+            }
+            .pf-nav {
+                gap: 8px;
+                font-size: 12px;
+            }
+            .pf-logo a {
+                font-size: 14px;
+            }
+            .pf-nav-link {
+                padding-inline: 6px;
+            }
+        }
+        /* 🔴 문의함 옆 빨간 뱃지 */
+        .badge-unread {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+            padding: 2px 7px;
+            min-width: 18px;
+            border-radius: 999px;
+            background-color: #ef4444; /* 빨간 배경 */
+            color: #ffffff;           /* 하얀 글씨 */
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1;
+        }
+    </style>
+</header>
+</body>
+</html>

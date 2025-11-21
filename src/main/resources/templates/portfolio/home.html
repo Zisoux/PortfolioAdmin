@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Portfolio | 홍지수</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <meta name="description" content="Backend Developer Portfolio"/>
+    <meta name="author" content="Hong Jisoo"/>
+
+    <!-- 폰트 / 메인 CSS (Lovable 스타일) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" crossorigin href="/assets/index-DS7I41Nk.css"/>
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #111827;
+        }
+
+        .pf-shell {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+        }
+
+        /* 상단 관리자 / 로그인 바 */
+        .pf-top-bar {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 12px;
+            margin-bottom: 16px;
+            color: #6b7280;
+            gap: 12px;
+        }
+
+        .pf-top-bar a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .pf-top-bar a:hover {
+            text-decoration: underline;
+            color: #111827;
+        }
+
+        .btn-link-like {
+            border: none;
+            background: none;
+            padding: 0;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .btn-link-like:hover {
+            text-decoration: underline;
+            color: #111827;
+        }
+
+        /* Hero 영역 */
+        .hero {
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .hero-badge {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #16a34a;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .hero-badge-line {
+            width: 28px;
+            height: 2px;
+            border-radius: 999px;
+            background-color: #16a34a;
+        }
+
+        .hero-heading {
+            font-size: clamp(40px, 5vw, 52px);
+            line-height: 1.05;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .hero-heading span.em {
+            color: #1d4ed8;
+        }
+
+        .hero-sub {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: none;
+            background-color: #16a34a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .btn-hero-primary:hover {
+            background-color: #15803d;
+            color: #ffffff;
+        }
+
+        .btn-hero-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            color: #111827;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .btn-hero-secondary:hover {
+            background-color: #f9fafb;
+        }
+
+        .hero-icons {
+            display: flex;
+            gap: 18px;
+            font-size: 18px;
+            color: #6b7280;
+        }
+
+        .hero-icons a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .hero-icons a:hover {
+            color: #111827;
+        }
+
+        /* Projects 섹션 */
+        .section-title-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #16a34a;
+            margin-bottom: 6px;
+        }
+
+        .section-title-main {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .section-sub {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        /* 🔧 Featured Projects 카드 레이아웃 강제 왼쪽 정렬 */
+
+        .projects-grid {
+            /* 어떤 flex / inline-flex가 들어와도 이걸로 덮어버림 */
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(260px, 1fr));
+            gap: 24px;
+
+            width: 100%;
+            margin: 0 !important;
+            padding: 0;
+
+            justify-content: flex-start !important;
+            justify-items: stretch !important;
+            align-items: stretch;
+
+            text-align: left; /* 혹시 상위 text-align: right 걸려 있으면 방어 */
+        }
+
+        /* 카드 전체를 감싸는 링크 */
+        .project-card-link {
+            display: block !important;
+            width: 100%;
+            height: 100%;
+            margin: 0 !important;
+
+            text-decoration: none;
+            color: inherit;
+
+            /* grid에서 오른쪽으로 붙는 걸 방지 */
+            justify-self: stretch !important;
+            align-self: stretch !important;
+            place-self: stretch !important;
+        }
+
+
+        /* 카드 자체 */
+        .project-card {
+            border-radius: 18px;
+            background: radial-gradient(circle at top left, #ecfdf3 0, #ffffff 55%);
+            border: 1px solid #bbf7d0;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            padding: 16px 16px 18px;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+
+            transition:
+                    transform 0.18s ease,
+                    box-shadow 0.18s ease,
+                    border-color 0.18s ease,
+                    background 0.18s ease;
+        }
+
+        /* hover 시 살짝 떠오르는 느낌 */
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+            border-color: #4ade80;
+            background: radial-gradient(circle at top left, #dcfce7 0, #ffffff 55%);
+            cursor: pointer;
+        }
+
+        /* 이미지 미리보기 영역 */
+        .project-image-wrapper {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            background-color: #e5e7eb;
+        }
+
+        .project-image {
+            display: block;
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .project-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background-color: #ecfdf3;
+            border: 1px solid #bbf7d0;
+            font-size: 11px;
+            font-weight: 500;
+            color: #16a34a;
+            margin-bottom: 10px;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .project-desc {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 10px;
+            flex-grow: 1;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .project-tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .project-footer {
+            /* 🔹 카드 내용이 얼마나 길든 항상 맨 아래에 붙도록 */
+            margin-top: auto;
+
+            /* 🔹 왼쪽: 기간, 오른쪽: 버튼 */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .project-links {
+            /* 🔹 왼쪽 내용을 밀어내고 버튼을 오른쪽 끝으로 */
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+
+        .project-link-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 5px 10px;
+            font-size: 11px;
+            text-decoration: none;
+            color: #111827;
+            background-color: #ffffff;
+        }
+
+        .project-link-btn.primary {
+            background-color: #16a34a;
+            border-color: #16a34a;
+            color: #ffffff;
+        }
+
+        .project-link-btn.primary:hover {
+            background-color: #15803d;
+            color: #ffffff;
+        }
+
+        .project-link-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+
+        .contact-card {
+            border-radius: 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 16px 18px;
+            font-size: 14px;
+        }
+
+        .contact-card a {
+            color: #16a34a;
+            text-decoration: none;
+        }
+
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* 모바일(태블릿 이하)에서는 한 줄에 1개 */
+        @media (max-width: 900px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== CONTACT SECTION ========== */
+
+        .contact-section {
+            margin-top: 80px;
+            margin-bottom: 40px;
+        }
+
+        .contact-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #16a34a;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .contact-heading {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .contact-sub {
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .contact-card {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            padding: 20px 22px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        .contact-card-info {
+            border-color: #4ade80;
+            box-shadow: 0 16px 40px rgba(16, 185, 129, 0.15);
+        }
+
+        .contact-card-form {
+            border-color: #1d4ed8;
+        }
+
+        .contact-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .contact-card-subtext {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .contact-info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background-color: #ecfdf3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #16a34a;
+            font-size: 20px;
+        }
+
+        .contact-info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 2px;
+        }
+
+        .contact-info-value {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .contact-info-value a {
+            color: #16a34a;
+            text-decoration: none;
+        }
+
+        .contact-info-value a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-form-group {
+            margin-bottom: 16px;
+        }
+
+        .contact-form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 6px;
+        }
+
+        .contact-form-input,
+        .contact-form-textarea {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .contact-form-input:focus,
+        .contact-form-textarea:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 1px #bbf7d0;
+        }
+
+        .contact-form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn-contact-submit {
+            display: inline-flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: none;
+            background-color: #16a34a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-contact-submit:hover {
+            background-color: #15803d;
+            box-shadow: 0 12px 30px rgba(22, 163, 74, 0.35);
+        }
+
+        @media (max-width: 900px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== FOOTER ========== */
+
+        .pf-footer {
+            border-top: 1px solid #e5e7eb;
+            margin-top: 64px;
+            padding: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .pf-footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .pf-footer-left span:first-child {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .pf-footer-icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pf-footer-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: background-color 0.15s ease, color 0.15s ease,
+                        box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .pf-footer-icon:hover {
+            background-color: #16a34a;
+            border-color: #16a34a;
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.35);
+        }
+
+        @media (max-width: 640px) {
+            .pf-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* ===== Contact Toast ===== */
+        .contact-toast {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            padding: 18px 28px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.95);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 9999;
+        }
+
+        .contact-toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        /* 🔴 문의함 옆 빨간 뱃지 */
+        .badge-unread {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+            padding: 2px 7px;
+            min-width: 18px;
+            border-radius: 999px;
+            background-color: #ef4444; /* 빨간 배경 */
+            color: #ffffff;           /* 하얀 글씨 */
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+
+    </style>
+</head>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('contactForm');
+        const toast = document.getElementById('contact-toast');
+
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // 기본 submit 막기
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams(formData) // x-www-form-urlencoded 형식
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    // 폼 초기화
+                    form.reset();
+
+                    // 토스트 보여주기
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('문의 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                });
+        });
+    });
+</script>
+
+<body>
+
+<div th:replace="~{fragments/header :: header('home')}"></div>
+
+<div class="pf-shell">
+
+    <!-- HERO 영역 -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="hero-badge-line"></span>
+            BACKEND DEVELOPER : 홍지수
+        </div>
+
+        <h1 class="hero-heading"
+            th:utext="#{hero.heading}">
+            <!-- fallback text -->
+            Building Digital<br/>Experiences
+        </h1>
+
+        <p class="hero-sub"
+           th:utext="#{hero.sub}">
+            Specialized in creating scalable web applications with Spring Boot and modern web technologies.
+            Passionate about clean architecture, reliable APIs, and delightful user experiences.
+        </p>
+
+        <div class="hero-actions">
+            <!-- 연락(메일)로 스크롤 -->
+            <a href="#contact" class="btn-hero-primary">
+                <span>✉️</span>
+                <span>Get In Touch</span>
+            </a>
+
+            <!-- 프로젝트 섹션으로 스크롤 -->
+            <a href="#projects" class="btn-hero-secondary">
+                View Projects
+            </a>
+        </div>
+
+        <div class="hero-icons">
+            <a href="https://github.com/Zisoux" target="_blank" rel="noreferrer">
+                My GitHub ->
+            </a>
+        </div>
+    </section>
+
+    <!-- FEATURED PROJECTS (DB에서 가져온 프로젝트 카드) -->
+    <section id="projects" style="margin-top: 40px;">
+        <div class="section-title-label">PORTFOLIO</div>
+        <div class="section-title-main">Featured Projects</div>
+        <div class="section-sub">
+            Recent works showcasing backend development, REST API design, and problem-solving capabilities.
+        </div>
+
+        <div th:if="${#lists.isEmpty(projects)}" class="text-muted small">
+            아직 등록된 프로젝트가 없습니다. 나중에 다시 방문해 주세요.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(projects)}" class="projects-grid">
+            <!-- 그리드의 직접 자식: div.project-card -->
+            <div th:each="project, stat : ${projects}" class="project-card">
+
+                <!-- 카드의 메인 클릭 영역: 상세 페이지 링크 -->
+                <a th:href="@{/projects/{id}(id=${project.id})}"
+                   class="project-card-main"
+                   style="text-decoration: none; color: inherit;">
+
+                    <!-- 이미지 미리보기 -->
+                    <div class="project-image-wrapper" th:if="${project.imageUrl}">
+                        <img th:src="${project.imageUrl}"
+                             th:alt="${project.title}"
+                             class="project-image"/>
+                    </div>
+
+                    <div class="project-pill">
+                <span th:text="${#strings.arraySplit(project.techStack, ',')[0]} ?: 'Project'">
+                    Spring Boot
+                </span>
+                    </div>
+
+                    <div class="project-title" th:text="${project.title}">
+                        UniLife – 대학생 일정 & 학점 관리 웹앱
+                    </div>
+
+                    <div class="project-desc" th:text="${project.description}">
+                        프로젝트 설명이 들어갑니다.
+                    </div>
+
+                    <div class="project-tags" th:if="${project.techStack}">
+                <span class="project-tag"
+                      th:each="stack : ${#strings.arraySplit(project.techStack, ',')}"
+                      th:text="${#strings.trim(stack)}">
+                    Spring Boot
+                </span>
+                    </div>
+
+                    <div class="project-period">
+                        <span th:text="${project.startDate}">2025-03</span>
+                        <span th:if="${project.endDate != null}">
+                    ~ <span th:text="${project.endDate}">2025-06</span>
+                </span>
+                    </div>
+                </a>
+
+                <!-- Live / Code 외부 링크 버튼 -->
+                <div class="project-footer">
+                    <div class="project-links">
+                        <a th:if="${project.projectUrl}"
+                           th:href="${project.projectUrl}"
+                           target="_blank"
+                           class="project-link-btn primary">
+                            Live / Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact 섹션 -->
+    <section id="contact" class="contact-section">
+        <div class="contact-label">CONTACT</div>
+        <h2 class="contact-heading">Get In Touch</h2>
+        <p class="contact-sub">
+            새로운 프로젝트, 협업 등 각종 문의가 있다면 편하게 연락 주세요.
+        </p>
+
+        <div class="contact-grid">
+            <!-- 왼쪽: Contact 정보 카드 -->
+            <div class="contact-card contact-card-info">
+                <div class="contact-card-title">Contact Information</div>
+                <div class="contact-card-subtext">
+                    아래 연락처로 언제든지 문의 주세요.
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">✉️</div>
+                    <div>
+                        <div class="contact-info-label">Email</div>
+                        <div class="contact-info-value">
+                            <a href="mailto:202345015@itc.ac.kr">202345015@itc.ac.kr</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 필요하면 전화 / 위치 등 더 추가해도 좋음 -->
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">📞</div>
+                    <div>
+                        <div class="contact-info-label">Phone</div>
+                        <div class="contact-info-value">+82-10-0000-0000</div>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">📍</div>
+                    <div>
+                        <div class="contact-info-label">Location</div>
+                        <div class="contact-info-value">Incheon, South Korea</div>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">📬</div>
+                    <div>
+                        <div class="contact-info-label">Post Code</div>
+                        <div class="contact-info-value">12345</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 메세지 폼 카드 -->
+            <div class="contact-card contact-card-form">
+                <div class="contact-card-title">Send a Message</div>
+                <div class="contact-card-subtext">
+                    최대한 빠르게 답장 드리겠습니다 :)
+                </div>
+
+                <!-- 실제 메일 전송까지 구현 안 했으면 action 은 일단 비워두거나 # 로 두기 -->
+                <form id="contactForm"
+                      th:action="@{/contact}"
+                      method="post">
+                    <div class="contact-form-group">
+                        <label class="contact-form-label" for="name">Name</label>
+                        <input id="name" name="name" type="text"
+                               class="contact-form-input"
+                               placeholder="Your name" required/>
+                    </div>
+
+                    <div class="contact-form-group">
+                        <label class="contact-form-label" for="email">Email</label>
+                        <input id="email" name="email" type="email"
+                               class="contact-form-input"
+                               placeholder="your.email@example.com" required/>
+                    </div>
+
+                    <div class="contact-form-group">
+                        <label class="contact-form-label" for="message">Message</label>
+                        <textarea id="message" name="message"
+                                  class="contact-form-textarea"
+                                  placeholder="Tell me about your project..."
+                                  required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-contact-submit">
+                        Send Message
+                    </button>
+                </form>
+
+                <!-- ✅ 문의 감사합니다 토스트 -->
+                <div id="contact-toast" class="contact-toast">
+                    문의 감사드립니다☺️
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pf-footer">
+        <div class="pf-footer-left">
+            <span>© 인하공전 컴퓨터시스템공학과 홍지수</span>
+            <span>3-A반 202345015</span>
+        </div>
+
+        <div class="pf-footer-icons">
+            <!-- GitHub -->
+            <a href="https://github.com/Zisoux"
+               target="_blank"
+               rel="noreferrer"
+               class="pf-footer-icon"
+               aria-label="GitHub">
+                🐙
+            </a>
+
+            <!-- LinkedIn 자리 (원하면 링크 채우기) -->
+            <a href="#"
+               class="pf-footer-icon"
+               aria-label="LinkedIn">
+                in
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:202345015@itc.ac.kr"
+               class="pf-footer-icon"
+               aria-label="Email">
+                ✉️
+            </a>
+        </div>
+    </footer>
+
+</div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>
