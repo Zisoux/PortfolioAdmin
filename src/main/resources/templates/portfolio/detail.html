@@ -88,6 +88,26 @@
             color: #111827;
         }
 
+        /* 상세 페이지 상단 이미지 영역 */
+        .project-detail-hero {
+            margin-bottom: 24px;
+        }
+
+        /* ✅ 전체가 다 보이도록: 세로 고정 X, 자르지 않음 */
+        .project-detail-image {
+            display: block;
+            width: 100%;
+            height: auto;          /* 고정 높이 제거 */
+            max-width: 960px;      /* 너무 커지지 않게 */
+            max-height: 600px;     /* 필요 없으면 이 줄 삭제해도 됨 */
+            object-fit: contain;   /* 이미지 전체 보이게 */
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            margin: 0 auto;        /* 가운데 정렬 */
+            background-color: #e5e7eb;  /* 로딩 시 회색 배경 */
+        }
+
+
         .project-detail-title {
             font-size: 26px;
             font-weight: 700;
@@ -260,11 +280,12 @@
     <main class="detail-main-card">
 
         <!-- 큰 이미지 -->
-        <div class="detail-image-wrapper" th:if="${project.imageUrl}">
+        <div class="project-detail-hero" th:if="${project.imageUrl}">
             <img th:src="${project.imageUrl}"
                  th:alt="${project.title}"
-                 class="detail-image" />
+                 class="project-detail-image"/>
         </div>
+
 
         <!-- 설명 -->
         <section>
