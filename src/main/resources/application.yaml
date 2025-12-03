@@ -9,7 +9,8 @@ server:
       force: true
 
 file:
-    upload-dir: C:/IntelliJ_WS/pf-uploads         # 파일 업로드 경로
+    # upload-dir: C:/IntelliJ_WS/pf-uploads
+    upload-dir: ${PF_UPLOAD_DIR:${user.home}/pf-uploads}       # 파일 업로드 경로
 
 spring:
   application:
