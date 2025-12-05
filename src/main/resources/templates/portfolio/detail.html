@@ -230,25 +230,15 @@
 </head>
 
 <body>
+
+<div th:replace="~{fragments/header :: header('')}"></div>
+
 <div class="pf-shell">
 
     <!-- 상단 바 (홈으로, 로그인/관리자) -->
     <div class="pf-top-bar">
         <div class="pf-top-left">
             <a th:href="@{/}">&larr; Back to Home</a>
-        </div>
-
-        <div class="pf-top-right">
-            <span sec:authorize="isAnonymous()">
-                <a th:href="@{/admin/login}">관리자 로그인</a>
-            </span>
-
-            <span sec:authorize="hasRole('ADMIN')">
-                <a th:href="@{/admin/projects}">Admin 대시보드</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn-link-like ms-2">로그아웃</button>
-                </form>
-            </span>
         </div>
     </div>
 

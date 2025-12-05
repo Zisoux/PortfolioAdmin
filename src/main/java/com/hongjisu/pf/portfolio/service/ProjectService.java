@@ -17,7 +17,6 @@ public class ProjectService {
     // 1. 프로젝트 생성 (Create)
     @Transactional
     public Project saveProject(Project project) {
-        // 실제 서비스에서는 데이터 유효성 검사 등 로직이 추가될 수 있습니다.
         return projectRepository.save(project);
     }
 
@@ -43,7 +42,7 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    // ⭐️ 5. 프로젝트 수정 (Update) 메서드 - ID로 기존 엔티티를 찾고 폼 데이터를 덮어씁니다.
+    // ⭐️ 5. 프로젝트 수정 (Update) 메서드 - ID로 기존 엔티티를 찾고 폼 데이터를 덮어씀
     @Transactional
     public Project updateProject(Long id, Project updatedProject) {
         Project project = projectRepository.findById(id)
@@ -59,7 +58,7 @@ public class ProjectService {
         project.setProjectUrl(updatedProject.getProjectUrl());
         project.setImageUrl(updatedProject.getImageUrl());
 
-        // JPA save() 메서드는 ID가 있으면 Update, 없으면 Insert를 수행합니다.
+        // ID가 있으면 Update, 없으면 Insert
         return projectRepository.save(project);
     }
 }

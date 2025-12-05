@@ -17,7 +17,6 @@ public class ContactController {
 
     private final ContactMessageService contactMessageService;
 
-    // 폼이 보내는 경로: /contact
     @PostMapping("/contact")
     @ResponseBody
     public ResponseEntity<?> submitContact(@Valid @ModelAttribute ContactMessageForm form) {

@@ -17,9 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final MemberSecurityService memberSecurityService; // UserDetailsService 구현체
+    private final MemberSecurityService memberSecurityService;
 
-    // 비밀번호 인코더
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 과제/관리자 화면 테스트 편하려면 일단 CSRF 끄고 시작
+                // 과제용으로 CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
