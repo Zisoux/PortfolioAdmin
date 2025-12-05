@@ -46,8 +46,8 @@ public class ProjectForm {
     private String projectUrl; // 프로젝트 링크 (Github 또는 배포 URL)
 
     @Size(max = 300)
-    private String imageUrl;   // 🔹 DB에 저장할 경로 (/uploads/xxx.png)
+    private String imageUrl;   // DB에 저장할 경로 (/uploads/xxx.png)
 
-    // 🔹 실제 업로드 파일 (DB에는 저장 X)
+    // 실제 업로드 파일 (DB에는 저장 X)
     private MultipartFile imageFile;
 }

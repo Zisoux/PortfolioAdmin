@@ -21,18 +21,18 @@ public class PortfolioController {
     public String showPortfolio(Model model) {
         model.addAttribute("projects", projectService.findAllProjects());
 
-        // 🔔 관리자용: 안 읽은 문의 수
+        // 관리자용: 안 읽은 문의 수
         long unreadCount = contactService.countUnread();
         model.addAttribute("unreadCount", unreadCount);
 
-        return "portfolio/home";   // templates/portfolio/home.html
+        return "portfolio/home";
     }
 
     @GetMapping("/projects/{id}")
     public String projectDetail(@PathVariable Long id, Model model) {
         Project project = projectService.findProjectById(id);
         model.addAttribute("project", project);
-        return "portfolio/detail";   // templates/portfolio/detail.html
+        return "portfolio/detail";
     }
 
 }

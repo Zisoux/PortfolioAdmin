@@ -38,11 +38,10 @@ public class MemberSecurityService implements UserDetailsService {
         // 3. 사용자 역할(Role)을 기반으로 권한 리스트 생성
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        // Member 엔티티의 role 필드를 사용하여 권한 부여 (예: "ROLE_ADMIN")
+        // Member 엔티티의 role 필드를 사용하여 권한 부여
         if (member.getRole().equals("ROLE_ADMIN")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         } else {
-            // 다른 역할이 있다면 추가
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
 

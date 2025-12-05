@@ -26,7 +26,7 @@ public class AdminContactController {
         }
         model.addAttribute("unreadCount", contactMessageService.countUnread());
 
-        return "admin/contact/list"; // 템플릿 이름
+        return "admin/contact/list";
     }
 
     @PostMapping("/{id}/read")
