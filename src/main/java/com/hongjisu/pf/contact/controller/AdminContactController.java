@@ -39,7 +39,7 @@ public class AdminContactController {
         return "redirect:/admin/contacts" + (Boolean.TRUE.equals(unreadOnly) ? "?unreadOnly=true" : "");
     }
 
-    @PostMapping("/admin/contacts/delete")
+    @PostMapping("/delete")
     public String deleteContacts(@RequestParam("contactIds") List<Long> contactIds) {
         contactMessageService.deleteAllByIds(contactIds);
         return "redirect:/admin/contacts";
