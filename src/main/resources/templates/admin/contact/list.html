@@ -238,6 +238,13 @@
         <div class="admin-filter-buttons">
             <a th:href="@{/admin/contacts}" class="btn btn-outline-secondary btn-sm">전체 보기</a>
             <a th:href="@{/admin/contacts(unreadOnly=true)}" class="btn btn-outline-success btn-sm">읽지 않은 것만</a>
+            <!-- ✅ 선택 삭제 폼 -->
+            <form id="deleteSelectedForm" th:action="@{/admin/contacts/delete}" method="post" class="d-inline">
+                <!-- JS가 여기 hidden input들을 추가합니다 -->
+                <button type="submit" class="btn btn-outline-danger btn-sm" id="btnDeleteSelected" disabled>
+                    선택 삭제
+                </button>
+            </form>
         </div>
     </div>
 
@@ -246,6 +253,9 @@
         <table class="table table-sm align-middle admin-table">
             <thead>
             <tr>
+                <th style="width: 40px;">
+                    <input class="form-check-input" type="checkbox" id="checkAll" aria-label="전체 선택">
+                </th>
                 <th style="width: 40px;">#</th>
                 <th style="width: 120px;">이름</th>
                 <th style="width: 200px;">Email</th>
@@ -257,6 +267,13 @@
             </thead>
             <tbody>
             <tr th:each="c, stat : ${contacts}">
+                <td>
+                    <input class="form-check-input contact-check"
+                           type="checkbox"
+                           name="contactIds"
+                           th:value="${c.id}"
+                           aria-label="문의 선택">
+                </td>
                 <td th:text="${stat.count}">1</td>
                 <td th:text="${c.name}">홍지수</td>
                 <td th:text="${c.email}">test@example.com</td>
@@ -353,6 +370,69 @@
             msgModal.querySelector('#modalContactMessage').textContent = message;
         });
     }
+
+    // ✅ 체크박스 선택 삭제 로직
+  document.addEventListener('DOMContentLoaded', () => {
+    const checkAll = document.getElementById('checkAll');
+    const checks = () => Array.from(document.querySelectorAll('.contact-check'));
+    const deleteForm = document.getElementById('deleteSelectedForm');
+    const btnDelete = document.getElementById('btnDeleteSelected');
+
+    function updateDeleteButton() {
+      const anyChecked = checks().some(cb => cb.checked);
+      btnDelete.disabled = !anyChecked;
+    }
+
+    // 전체 선택
+    if (checkAll) {
+      checkAll.addEventListener('change', () => {
+        checks().forEach(cb => cb.checked = checkAll.checked);
+        updateDeleteButton();
+      });
+    }
+
+    // 개별 선택 시 전체선택 상태 동기화
+    checks().forEach(cb => {
+      cb.addEventListener('change', () => {
+        const all = checks();
+        const allChecked = all.length > 0 && all.every(x => x.checked);
+        const anyChecked = all.some(x => x.checked);
+        if (checkAll) checkAll.checked = allChecked;
+        btnDelete.disabled = !anyChecked;
+      });
+    });
+
+    // 제출 시: confirm + 선택된 id를 hidden input으로 추가하여 전송
+    if (deleteForm) {
+      deleteForm.addEventListener('submit', (e) => {
+        const selected = checks().filter(cb => cb.checked).map(cb => cb.value);
+
+        if (selected.length === 0) {
+          e.preventDefault();
+          alert('삭제할 문의를 선택해 주세요.');
+          return;
+        }
+
+        const ok = confirm(`정말 삭제하시겠습니까?\n선택된 문의: ${selected.length}개`);
+        if (!ok) {
+          e.preventDefault();
+          return;
+        }
+
+        // 기존 hidden input 제거 후 다시 생성 (중복 방지)
+        deleteForm.querySelectorAll('input[name="contactIds"]').forEach(el => el.remove());
+        selected.forEach(id => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'contactIds';
+          input.value = id;
+          deleteForm.appendChild(input);
+        });
+      });
+    }
+
+    updateDeleteButton();
+  });
 </script>
 
 <script
