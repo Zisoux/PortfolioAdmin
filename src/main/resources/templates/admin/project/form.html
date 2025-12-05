@@ -160,7 +160,7 @@
 
         <div class="mb-3">
             <h1 class="admin-page-title"
-                th:text="${projectForm.id} == null ? '새 프로젝트 등록' : '프로젝트 수정'">
+                th:text="${projectForm.id} == null ? '🗃️ 새 프로젝트 등록' : '🗃️ 프로젝트 수정'">
                 새 프로젝트 등록
             </h1>
             <p class="admin-page-sub">
@@ -181,7 +181,7 @@
 
             <!-- 제목 -->
             <div class="mb-3">
-                <label for="title" class="form-label">제목</label>
+                <label for="title" class="form-label">🔴 제목</label>
                 <input type="text"
                        id="title"
                        th:field="*{title}"
@@ -198,7 +198,7 @@
 
             <!-- 설명 -->
             <div class="mb-3">
-                <label for="description" class="form-label">설명</label>
+                <label for="description" class="form-label">🟠 설명</label>
                 <textarea id="description"
                           th:field="*{description}"
                           class="form-control"
@@ -215,7 +215,7 @@
 
             <!-- 기술 스택 -->
             <div class="mb-3">
-                <label for="techStack" class="form-label">기술 스택</label>
+                <label for="techStack" class="form-label">🟡 기술 스택</label>
                 <input type="text"
                        id="techStack"
                        th:field="*{techStack}"
@@ -230,7 +230,7 @@
 
             <!-- 기여 내용 -->
             <div class="mb-3">
-                <label for="contribution" class="form-label">기여 내용</label>
+                <label for="contribution" class="form-label">🟢 기여 내용</label>
                 <input type="text"
                        id="contribution"
                        th:field="*{contribution}"
@@ -246,7 +246,7 @@
             <div class="row">
                 <!-- 시작일 -->
                 <div class="col-md-6 mb-3">
-                    <label for="startDate" class="form-label">시작일</label>
+                    <label for="startDate" class="form-label">🔵 시작일</label>
                     <input type="text"
                            id="startDate"
                            th:field="*{startDate}"
@@ -261,7 +261,7 @@
 
                 <!-- 종료일 -->
                 <div class="col-md-6 mb-3">
-                    <label for="endDate" class="form-label">종료일</label>
+                    <label for="endDate" class="form-label">🟣 종료일</label>
                     <input type="text"
                            id="endDate"
                            th:field="*{endDate}"
@@ -277,7 +277,7 @@
 
             <!-- 프로젝트 URL -->
             <div class="mb-4">
-                <label for="projectUrl" class="form-label">프로젝트 URL (Github / 배포 링크)</label>
+                <label for="projectUrl" class="form-label">🔗 프로젝트 URL (Github / 배포 링크)</label>
                 <input type="text"
                        id="projectUrl"
                        th:field="*{projectUrl}"
@@ -292,7 +292,7 @@
 
             <!-- 🔹 파일 업로드 필드 -->
             <div class="mb-4">
-                <label for="imageFile" class="form-label">프로젝트 이미지 업로드</label>
+                <label for="imageFile" class="form-label">🖼️ 프로젝트 이미지 업로드</label>
                 <input type="file"
                        id="imageFile"
                        name="imageFile"
