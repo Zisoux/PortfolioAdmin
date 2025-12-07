@@ -34,12 +34,12 @@
           font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           color: #111827;
 
-          /* ✅ 메쉬 배경(조금 덜 튀게 알파 살짝 다운) */
+          /* ✅ 메쉬 배경(더 진하게 + 더 넓게 퍼지게) */
           background:
-                  radial-gradient(900px 600px at 12% 0%, rgba(29,78,216,0.08), transparent 60%),
-                  radial-gradient(900px 600px at 88% 10%, rgba(22,163,74,0.08), transparent 55%),
-                  radial-gradient(1000px 700px at 55% 105%, rgba(245,158,11,0.06), transparent 60%),
-                  #f8fafc;
+            radial-gradient(900px 600px at 12% 0%, rgba(29,78,216,0.20), transparent 60%),
+            radial-gradient(900px 600px at 88% 10%, rgba(22,163,74,0.18), transparent 58%),
+            radial-gradient(1000px 700px at 55% 105%, rgba(245,158,11,0.14), transparent 62%),
+            #f8fafc;
         }
 
         .pf-shell {
@@ -196,7 +196,7 @@
           line-height: 1.8;
           color: #6b7280;
           margin-bottom: 22px;
-          max-width: 56ch;
+          max-width: 59ch;
         }
 
         .hero-actions {
@@ -772,26 +772,30 @@
         .contact-toast {
           position: fixed;
           left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%) scale(0.95);
-          padding: 18px 28px;
+          bottom: 28px;
+          top: auto;
+
+          transform: translateX(-50%) translateY(10px);
+          padding: 14px 22px;
           border-radius: 999px;
           background: rgba(15, 23, 42, 0.95);
           color: #ffffff;
-          font-size: 15px;
-          font-weight: 500;
-          box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+          font-size: 14px;
+          font-weight: 600;
+
+          box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.2s ease, transform 0.2s ease;
-          z-index: 9999;
+          z-index: 999999;
         }
 
         .contact-toast.show {
           opacity: 1;
-          transform: translate(-50%, -50%) scale(1);
+          transform: translateX(-50%) translateY(0);
           pointer-events: auto;
         }
+
 
         .badge-unread {
           display: inline-flex;
@@ -939,6 +943,56 @@
             grid-template-columns: 1fr;
           }
         }
+
+        /* ===== Back to Top Button ===== */
+        .back-to-top{
+          position: fixed;
+          right: 22px;
+          bottom: 22px;
+          width: 46px;
+          height: 46px;
+          border-radius: 999px;
+
+          border: 1px solid rgba(229,231,235,1);
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(10px);
+
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+
+          color: #111827;
+          cursor: pointer;
+
+          box-shadow: 0 14px 30px rgba(15,23,42,0.12);
+          transition: transform .15s ease, box-shadow .15s ease, opacity .2s ease, visibility .2s ease;
+
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          z-index: 999999;
+        }
+
+        .back-to-top:hover{
+          transform: translateY(-2px);
+          box-shadow: 0 18px 40px rgba(15,23,42,0.16);
+        }
+
+        .back-to-top:active{
+          transform: translateY(0);
+        }
+
+        /* 보이게 할 때 */
+        .back-to-top.show{
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        @media (prefers-reduced-motion: reduce){
+          .back-to-top{ transition: none; }
+        }
+
     </style>
 </head>
 
@@ -1224,10 +1278,6 @@
                         Send Message
                     </button>
                 </form>
-
-                <div id="contact-toast" class="contact-toast">
-                    문의 감사드립니다☺️
-                </div>
             </div>
         </div>
     </section>
@@ -1264,9 +1314,21 @@
 
 </div>
 
+<button id="backToTop" class="back-to-top" type="button" aria-label="맨 위로">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5l-7 7m7-7l7 7M12 5v14"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+
+<div id="contact-toast" class="contact-toast">
+    문의 감사드립니다☺️
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // ===== Contact AJAX =====
+      // ===== Contact AJAX (Toast) =====
       const form = document.getElementById('contactForm');
       const toast = document.getElementById('contact-toast');
 
@@ -1279,18 +1341,18 @@
           fetch(form.action, {
             method: 'POST',
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: new URLSearchParams(formData)
+            body: new URLSearchParams(formData),
           })
-            .then(res => {
+            .then(async (res) => {
               if (!res.ok) throw new Error('Network response was not ok');
-              return res.json();
+              return; // JSON 파싱 없음
             })
             .then(() => {
               form.reset();
               toast.classList.add('show');
               setTimeout(() => toast.classList.remove('show'), 3000);
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(err);
               alert('문의 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
             });
@@ -1300,7 +1362,7 @@
       // ===== 섹션 하단 중앙 ↓ 버튼 + 다음 섹션으로 “딱 맞춰” 스크롤 =====
       const headerEl = document.querySelector('header, .pf-header, .site-header');
       const headerH = headerEl ? Math.ceil(headerEl.getBoundingClientRect().height) : 0;
-      document.documentElement.style.setProperty('--header-offset', (headerH + 12) + 'px');
+      document.documentElement.style.setProperty('--header-offset', headerH + 12 + 'px');
 
       const sections = Array.from(document.querySelectorAll('.pf-section'));
       sections.forEach((sec, idx) => {
@@ -1324,6 +1386,23 @@
           window.scrollTo({ top, behavior: 'smooth' });
         });
       });
+
+      // ===== Back to Top =====
+        const backToTop = document.getElementById('backToTop');
+
+        const toggleBackToTop = () => {
+          if (!backToTop) return;
+          if (window.scrollY > 350) backToTop.classList.add('show');
+          else backToTop.classList.remove('show');
+        };
+
+        toggleBackToTop();
+        window.addEventListener('scroll', toggleBackToTop, { passive: true });
+
+        backToTop?.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
     });
 </script>
 

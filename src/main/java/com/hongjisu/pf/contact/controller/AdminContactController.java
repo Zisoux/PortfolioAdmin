@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/contacts")
@@ -36,4 +38,11 @@ public class AdminContactController {
         contactMessageService.markAsRead(id);
         return "redirect:/admin/contacts" + (Boolean.TRUE.equals(unreadOnly) ? "?unreadOnly=true" : "");
     }
+
+    @PostMapping("/delete")
+    public String deleteContacts(@RequestParam("contactIds") List<Long> contactIds) {
+        contactMessageService.deleteAllByIds(contactIds);
+        return "redirect:/admin/contacts";
+    }
+
 }
